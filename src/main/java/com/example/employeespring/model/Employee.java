@@ -8,7 +8,7 @@ public class Employee {
 
     //The variables are private since they contain sensitive information
     @Id //Indicates the object's ID
-    private Integer id;
+    private String id;
 
     private String firstName;
     private String lastName;
@@ -17,11 +17,11 @@ public class Employee {
     private String designation;
 
     //public get and set methods to access and update the value of private id variable
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -66,6 +66,6 @@ public class Employee {
     }
 
     public void setDesignation(String designation) {
-        designation = designation;
+        this.designation = designation;
     }
 }

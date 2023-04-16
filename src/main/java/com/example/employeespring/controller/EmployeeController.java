@@ -1,28 +1,48 @@
 package com.example.employeespring.controller;
 
 import com.example.employeespring.model.Employee;
-import com.example.employeespring.repository.EmployeeRepo;
+import com.example.employeespring.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController //marks the class as a request handler
+@RequestMapping(value = "api/employee")
 public class EmployeeController {
     @Autowired
-    private EmployeeRepo repo;
+    private EmployeeService employeeService;
 
     @PostMapping("/addEmployee")
-    public String addEmployee(@RequestBody Employee employee){
-        repo.save(employee);
-        return "Added the employee successfully!";
+    public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee){
+        Employee savedEmployee = employeeService.createEmployee(employee);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedEmployee.getId()).toUri();
+        return ResponseEntity.created(location).body(savedEmployee);
     }
 
     @GetMapping("/findAllEmployees")
-    public List<Employee> getEmployees(){
-        return repo.findAll();
+    public List<Employee> getAllEmployees() {
+        return employeeService.getAllEmployees();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable String id) {
+        Optional<Employee> employee = employeeService.getEmployeeById(id);
+        return employee.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable String id, @RequestBody Employee employee) {
+        Employee updatedEmployee = employeeService.updateEmployee(id, employee);
+        return ResponseEntity.ok(updatedEmployee);
+    }
+
+    @DeleteMapping("/delete/{id}")
+   public ResponseEntity<Void> deleteEmployeeById(@PathVariable String id) {
+        employeeService.deleteEmployeeById(id);
+        return ResponseEntity.noContent().build();
     }
 }
