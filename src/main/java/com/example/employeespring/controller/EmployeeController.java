@@ -29,9 +29,8 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable String id) {
-        Optional<Employee> employee = employeeService.getEmployeeById(id);
-        return employee.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public Employee getEmployeeById(@PathVariable String id) {
+        return employeeService.getEmployeeById(id);
     }
 
     @PutMapping("/update/{id}")
